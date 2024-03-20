@@ -1,4 +1,5 @@
 import { AbstractControl, ValidationErrors, ValidatorFn } from '@angular/forms';
+import { IToast, NgToastService } from 'ng-angular-popup';
 
 export const confirmPasswordValidator: ValidatorFn = (
   control: AbstractControl

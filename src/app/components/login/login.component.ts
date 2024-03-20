@@ -7,6 +7,7 @@ import {
 } from '@angular/forms';
 import { AuthenticationService } from '../../services/authentication.service';
 import { Router } from '@angular/router';
+import { NgToastService } from "ng-angular-popup";
 
 @Component({
   selector: 'app-login',
@@ -19,7 +20,7 @@ export class LoginComponent implements OnInit {
   public loginForm!: FormGroup;
   private emailPattern: any =
     /^(([^<>()[\]\\.,;:\s@\"]+(\.[^<>()[\]\\.,;:\s@\"]+)*)|(\".+\"))@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\])|(([a-zA-Z\-0-9]+\.)+[a-zA-Z]{2,}))$/;
-  constructor(private auth: AuthenticationService, private router: Router) {}
+  constructor(private auth: AuthenticationService, private router: Router, private toast: NgToastService) {}
 
   ngOnInit() {
     this.loginForm = new FormGroup({
@@ -35,16 +36,30 @@ export class LoginComponent implements OnInit {
     if (this.loginForm.valid) {
       this.auth.Login(this.loginForm.value).subscribe({
         next: (res) => {
-          alert(res.message);
           this.loginForm.reset();
+          this.toast.success({
+            detail: 'SUCCESS',
+            summary: res.message,
+            duration: 3000
+          });
           this.router.navigate(['home']);
         },
         error: (err) => {
-          alert(err.error.message);
+          this.toast.error({
+            detail: 'ERROR',
+            summary: err.error.message,
+            duration: 3000,
+            position: "topCenter"
+          });
         },
       });
     } else {
-      alert('Required fields');
+      this.toast.error({
+        detail: 'ERROR',
+        summary: 'Required fields',
+        duration: 3000,
+        position: "topCenter"
+      });
     }
   }
   viewpass() {
